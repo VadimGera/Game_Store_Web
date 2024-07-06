@@ -7,6 +7,6 @@
         public string? Email { get; set; }
         public string? UserStatus { get; set; }
         public string? UserGames { get; set; }
-        public int balance { get; set; }
+        public int Balance { get; set; }
     }
 }
