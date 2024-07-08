@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using GameStore.Models;
 using GameStore;
 
@@ -27,9 +26,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
+
 app.UseAuthorization();
-app.MapController();
+
+app.MapControllers();
+
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>

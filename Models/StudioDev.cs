@@ -1,4 +1,4 @@
-﻿namespace GameStore
+﻿namespace GameStore.Models
 {
     public class StudioDev
     {

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GameStore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore
 {
