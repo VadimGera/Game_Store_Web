@@ -17,7 +17,7 @@ namespace GameStore
         {
             if (!optionsBuilder.IsConfigured) 
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=postgres;Database=gamestore");
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=gamestore;Username=postgres;Password=postgres");
             }
         }
     }

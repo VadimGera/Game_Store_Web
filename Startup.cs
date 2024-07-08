@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using GameStore.Models;
+using Microsoft.OpenApi.Models;
 using GameStore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,7 +37,7 @@ app.MapControllers();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoints("/swagger/v1/swagger.json, Game Store API V1");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Game Store API V1");
     c.RoutePrefix = string.Empty;
 });
 
