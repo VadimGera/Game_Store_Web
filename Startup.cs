@@ -1,17 +1,41 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using GameStore.Models;
 using GameStore;
 
-using (ApplicationContext db = new ApplicationContext())
+var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<ApplicationContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSwaggerGen(c =>
 {
-    User user1 = new User { Username ="Puska1337", Email = "gusinica@gmail.com", UserStatus = "Offline", UserGames = "", Balance = 0 };
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Game Store API", Version = "v1" });
+});
 
-    db.Users.Add(user1);
-    db.SaveChanges();
-    Console.WriteLine("Objects save");
+var app = builder.Build();
 
-    var users = db.Users.ToList();
-    Console.WriteLine("Objects list:");
-    foreach (User u in users)
-    {
-        Console.WriteLine($"{u.Id}.{u.Username} - {u.Email} - {u.UserStatus} - {u.UserGames} - {u.Balance}");
-    }
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthorization();
+app.MapController();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoints("/swagger/v1/swagger.json, Game Store API V1");
+    c.RoutePrefix = string.Empty;
+});
+
+app.Run();
