@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GameStore;
+using GameStore.Data;
 using GameStore.Models;
 
 [ApiController]

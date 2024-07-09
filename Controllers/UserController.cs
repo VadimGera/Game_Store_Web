@@ -1,94 +1,109 @@
+using GameStore.Data;
+using GameStore.Dtos;
+using GameStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GameStore;
-using GameStore.Models;
+
+namespace GameStore.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class UserController : ControllerBase
+[Route("api/[controller]/[action]")]
+public class UserController(ApplicationContext context) : ControllerBase
 {
-    private readonly ApplicationContext _context;
-
-    public UserController(ApplicationContext context)
-    {
-        _context = context;
-    }
-
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    public async Task<IActionResult> GetUsers()
     {
-        return await _context.Users.ToListAsync();
+        var users = await context.Users
+            .OrderByDescending(x => x.CreateDate)
+            .ToListAsync();
+
+        return Ok(users);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<IActionResult> GetUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        //var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
+        var user = await context.Users.FindAsync(id);
 
-        if (user == null)
-        {
+        if (user is null)
             return NotFound();
-        }
 
-        return user;
+        return Ok(user);
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
+    public async Task<IActionResult> CreateUser(User user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(int id, User user)
+    public async Task<IActionResult> PutUser(UpdateUserDto dto)
     {
-        if (id != user.Id)
-        {
+
+        if (dto.Id < 0)
             return BadRequest();
-        }
+        
+        var user = await context.Users
+            .FirstOrDefaultAsync(x => x.Id == dto.Id);
 
-        _context.Entry(user).State = EntityState.Modified;
+        if (user is null)
+            return NotFound();
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!UserExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
+        user.Username = dto.UserName;
+        
+        await context.SaveChangesAsync();
 
         return NoContent();
+
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
-        var user = await _context.Users.FindAsync(id);
-        if (user == null)
-        {
+        var user = await context.Users
+            .FindAsync(id);
+        
+        if (user is null)
             return NotFound();
-        }
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    private bool UserExists(int id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> UserExists(int id)
     {
-        return _context.Users.Any(e => e.Id == id);
+        return Ok(await context.Users.AnyAsync(e => e.Id == id));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> AddUsers()
+    {
+        var names = new List<string>() { "Alex", "Bob", "Vadim", "Oleg" };
+
+        foreach (var name in names)
+        {
+            context.Users.Add(new User
+            {
+                Username = name,
+                Email = $"{name}@gmail.com",
+                CreateDate = DateTime.UtcNow
+            });
+        }
+
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+
 
 }
