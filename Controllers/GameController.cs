@@ -5,7 +5,7 @@ using GameStore.Models;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameController : Controller
+public class GameController : ControllerBase
 {
     private readonly ApplicationContext _context;
 
