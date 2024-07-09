@@ -6,6 +6,7 @@ namespace GameStore
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Game> Games { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) 
             : base(options) 
