@@ -2,14 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using GameStore;
 using GameStore.Data;
+using GameStore.Dtos.Game;
 using GameStore.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+//http://localhost:1234/api/Game/GetGames
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 public class GameController : ControllerBase
 {
     private readonly ApplicationContext _context;
-
+    
     public GameController(ApplicationContext context)
     {
         _context = context;
@@ -35,12 +39,24 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Game>> PostGame(Game game)
+    public async Task<IActionResult> PostGame(CreateGameDto dto)
     {
+        var studioDev = await _context.StudioDevs.FindAsync(dto.StudioDevId);
+
+        if (studioDev is null)
+            return NotFound();
+
+        var game = new Game
+        {
+            StudioDev = studioDev,
+            GameName = dto.Name
+        };
+        
         _context.Games.Add(game);
+        
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetGame), new { id = game.Id }, game);
+        return Ok(game.Id);
     }
 
     [HttpPut("{id}")]

@@ -1,19 +1,23 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using GameStore;
 using GameStore.Data;
+using GameStore.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//TODO IGameService
+//TODO GameReviewService
+
+//TODO Create GameReview Controller
+//TODO Update Game controller
 
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
+
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

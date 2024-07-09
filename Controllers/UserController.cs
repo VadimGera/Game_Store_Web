@@ -1,6 +1,8 @@
 using GameStore.Data;
 using GameStore.Dtos;
+using GameStore.Dtos.Game;
 using GameStore.Models;
+using GameStore.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,14 +10,19 @@ namespace GameStore.Controllers;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-public class UserController(ApplicationContext context) : ControllerBase
+public class UserController(ApplicationContext context, IUserService userService) : ControllerBase
 {
+
+    [HttpPost]
+    public async Task<IActionResult> AddGameToUser(AddGameToUserDto dto)
+    {
+        return Ok(await userService.AddGameToUser(dto));
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetUsers()
     {
-        var users = await context.Users
-            .OrderByDescending(x => x.CreateDate)
-            .ToListAsync();
+        var users = await userService.GetUsers();
 
         return Ok(users);
     }
