@@ -4,7 +4,7 @@ using GameStore.Models;
 namespace GameStore.Dtos.User;
 
 /// <summary>
-/// То, что мы будет отдвавать на фронь
+/// То, что мы будет отдвавать на фронт
 /// </summary>
 public class UserDto
 {
