@@ -31,16 +31,29 @@ public class UserService(ApplicationContext context) : IUserService
                 }).ToList()
             }).ToListAsync();
         
-        //TODO GetUserById(int id)
-        //TODO UpdateUser(UpdateUserDto dto)
-        //TODO DeleteUser(int id)
-        //TODO DeleteUser(User user)
-        //TODO CreateUser(CreateUserDto dto)   
-    
-        //var user = await context.Users.FindAsync(dto.Id);
-        //user.UserName = dto.UserName;
-        //....
-        // await context.SaveChangesAsync();
+        
+    }
+
+    public async Task<UserDto> GetUserById (int id)
+    {
+        var user = await context.Users
+            .Include(x => x.BoughtGames)
+            .Select(x => new UserDto
+            {
+                Id = x.Id,
+                Username = x.Username,
+                Email = x.Email,
+                Status = x.Status,
+                Balance = x.Balance,
+                IsEmailVerified = x.IsEmailVerified,
+                BoughtGames = x.BoughtGames.Select(game => new GameDto
+                {
+                    Id = game.Id,
+                    GameName = game.GameName
+                }).ToList()
+            })
+            .FirstOrDefaultAsync(x => x.Id == id);
+        return user;
     }
 
     public async Task<bool> AddGameToUser(AddGameToUserDto dto)

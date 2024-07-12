@@ -28,6 +28,16 @@ public class UserController(ApplicationContext context, IUserService userService
     }
 
     [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById (int id)
+    {
+        var user = await context.Users.FindAsync(id);
+
+        if (user is null) 
+            return NotFound();
+        return Ok(user);
+    }
+
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id)
     {
         //var user = await context.Users.FirstOrDefaultAsync(x => x.Id == id);
